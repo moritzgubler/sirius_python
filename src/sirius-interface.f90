@@ -169,28 +169,6 @@ contains
     call calc_deralat(stress, alat, deralat)
   end subroutine energyandforces_sirius
 
-  subroutine setup_save(nat, rxyz, alat, pw_cutoff, gk_cutoff, k_points, k_offset)
-    implicit none
-    integer, intent(in) :: nat
-    real(8), intent(in) :: rxyz(3, nat)
-    real(8), dimension(3, 3), intent(in) :: alat
-    real(8), intent(in) :: pw_cutoff
-    !! cutoff in rydberg
-    real(8), intent(in) :: gk_cutoff
-    ! cutoff in rydberg
-    integer, dimension(3), intent(in) :: k_points
-    integer, dimension(3), intent(in) :: k_offset
-
-    character(len=2), dimension(nat) :: atomnames
-    character(len=20) :: json_dir
-
-
-    json_dir = './'
-    atomnames = 'Si'
-    call setup_sirius(nat, rxyz, alat, atomnames, json_dir, pw_cutoff, gk_cutoff, k_points, k_offset)
-
-  end subroutine setup_save
-
   !! use this subroutine to set up the calculations with sirius.
   !! Atomic units are used in the entire module.
   !! This subroutine needs to be called with all the mpi processes that are

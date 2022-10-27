@@ -15,7 +15,7 @@ for i in range(nat):
 
 print(np.shape(pos))
 
-kgrid = 3*np.ones(3, dtype=np.int32).T
+kgrid = 1*np.ones(3, dtype=np.int32).T
 kshift = np.zeros(3, dtype=np.int32).T
 
 at_names = np.array(symb, dtype='c').T
