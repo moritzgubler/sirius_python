@@ -13,7 +13,6 @@ at_names = np.empty((nat, 2), dtype='c')
 for i in range(nat):
     at_names[i] = str(symb[i])
 
-print(np.shape(pos))
 
 kgrid = 1*np.ones(3, dtype=np.int32).T
 kshift = np.zeros(3, dtype=np.int32).T
@@ -24,7 +23,6 @@ json_dir = './'
 pw_cutoff = 500.0
 gk_cutoff = 90.0
 
-print(type(pos))
 
 
 sirius.mod_sirius_energy.setup_sirius(pos, lat, at_names, json_dir, pw_cutoff, gk_cutoff, kgrid, kshift, nat)

@@ -175,7 +175,7 @@ contains
   !! available. Only process 0 will return from this subroutine. The others
   !! will be kept ready until another energy calculation is required.
   !! mpi_init will be called here.
-  subroutine setup_sirius(nat, rxyz, alat, atomnames_in, json_dir, pw_cutoff, gk_cutoff, k_points, k_offset)
+  subroutine setup_sirius(nat, rxyz, alat, atomnames_in, json_dir, pw_cutoff, gk_cutoff, k_points, k_offset, json_string)
     use mpi
     implicit none
     integer, intent(in) :: nat
@@ -189,21 +189,19 @@ contains
     ! cutoff in rydberg
     integer, dimension(3), intent(in) :: k_points
     integer, dimension(3), intent(in) :: k_offset
+    character(len=*) :: json_string
     integer :: mpi_err
     integer :: t1, t2, i
 
     character(len=2), dimension(nat) :: atomnames
     character :: temp_char(2)
 
-    print*, atomnames_in(:, 1)
 
     do i = 1, nat
       temp_char = atomnames_in(:, i)
       atomnames(i)(1:1) = temp_char(1)
       atomnames(i)(2:2) = temp_char(2)
-      print*, atomnames(i), ' ', temp_char
     end do
-    print*, trim(json_dir)
 
     if ( is_setup ) then ! should not be set up already. stopping.
       print*, "setup_sirius called while being setup"
@@ -234,10 +232,7 @@ contains
       end if
     end if
     set_up_first_time = .FALSE.
-    call system_clock(t1)
     call setup_sirius_internal(nat, rxyz, alat, atomnames, json_dir, pw_cutoff, gk_cutoff, k_points, k_offset)
-    call system_clock(t2)
-    print*, "setup time internal:", (t2 - t1)/1000.0
     if (rank > 0) then ! process is slave
       !open(6,file="standard_out_garbage.out")
       call slave_loop
@@ -245,18 +240,19 @@ contains
     end if
   end subroutine setup_sirius
 
-  subroutine setup_sirius_internal(nat, rxyz, alat, atomnames, json_dir, pw_cutoff, gk_cutoff, k_points, k_offset)
+  subroutine setup_sirius_internal(nat, rxyz, alat, atomnames, json_dir, pw_cutoff, gk_cutoff, k_points, k_offset, json_string)
     use mpi
     implicit none
     integer, intent(in) :: nat
     real(8), intent(in) :: rxyz(3, nat)
     real(8), intent(in) :: alat(3, 3)
     character(len=2), intent(in) :: atomnames(nat)
-    character(len=*) :: json_dir
-    real(8) :: pw_cutoff
-    real(8) :: gk_cutoff
+    character(len=*), intent(in) :: json_dir
+    real(8),intent(in) :: pw_cutoff
+    real(8), intent(in) :: gk_cutoff
     integer, intent(in) :: k_points(3)
     integer, intent(in) :: k_offset(3)
+    character(len=*), intent(in) :: json_string
     integer :: i, nkpt
     real(8), dimension(3, nat) :: xyzred
     integer :: sir_err
@@ -368,7 +364,6 @@ contains
       return
     end if
     if (wakeup == shutdown_sig) then
-      print *, "process ", rank, "is done and will exit"
       call mpi_finalize(mpi_err)
       stop
     end if
