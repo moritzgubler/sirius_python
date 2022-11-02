@@ -175,7 +175,7 @@ contains
   !! available. Only process 0 will return from this subroutine. The others
   !! will be kept ready until another energy calculation is required.
   !! mpi_init will be called here.
-  subroutine setup_sirius(nat, rxyz, alat, atomnames_in, json_dir, pw_cutoff, gk_cutoff, k_points, k_offset, json_string)
+  subroutine setup_sirius(nat, rxyz, alat, atomnames_in, json_dir, pw_cutoff, gk_cutoff, k_points, k_offset)
     use mpi
     implicit none
     integer, intent(in) :: nat
@@ -189,7 +189,6 @@ contains
     ! cutoff in rydberg
     integer, dimension(3), intent(in) :: k_points
     integer, dimension(3), intent(in) :: k_offset
-    character(len=*) :: json_string
     integer :: mpi_err
     integer :: t1, t2, i
 
@@ -240,7 +239,7 @@ contains
     end if
   end subroutine setup_sirius
 
-  subroutine setup_sirius_internal(nat, rxyz, alat, atomnames, json_dir, pw_cutoff, gk_cutoff, k_points, k_offset, json_string)
+  subroutine setup_sirius_internal(nat, rxyz, alat, atomnames, json_dir, pw_cutoff, gk_cutoff, k_points, k_offset)
     use mpi
     implicit none
     integer, intent(in) :: nat
@@ -252,7 +251,6 @@ contains
     real(8), intent(in) :: gk_cutoff
     integer, intent(in) :: k_points(3)
     integer, intent(in) :: k_offset(3)
-    character(len=*), intent(in) :: json_string
     integer :: i, nkpt
     real(8), dimension(3, nat) :: xyzred
     integer :: sir_err

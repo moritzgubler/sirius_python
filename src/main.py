@@ -20,8 +20,8 @@ kshift = np.zeros(3, dtype=np.int32).T
 at_names = np.array(symb, dtype='c').T
 
 json_dir = './'
-pw_cutoff = 500.0
-gk_cutoff = 90.0
+pw_cutoff = 240.0
+gk_cutoff = 60.0
 
 
 
