@@ -114,11 +114,46 @@ contains
         end subroutine string_array_to_string
     end subroutine broadcast_sirius_params
 
-    subroutine recv_sirius_param(t)
+    subroutine recv_sirius_params(t)
         use mpi
         class(sirius_params) :: t
         integer :: ierr, rank
-        character
+        character, allocatable, dimension(:) :: types_string, pseudo_string
+        character(len=2*100) :: xc_string
+
+        call t%deallocate_sirius_params()
+
+        call mpi_comm_rank(MPI_COMM_WORLD, rank, ierr)
+
+        call mpi_recv(t%ntype, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE, ierr)
+        if (ierr /= 0) stop 'jklajkl'
+
+        allocate(types_string(2*t%ntype))
+        allocate(pseudo_string(t%ntype * 250))
+
+        call mpi_recv(types_string, 2*t%ntype, MPI_CHARACTER, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE, ierr)
+        if (ierr /= 0) stop 'agrfjldks;alsfgkdj;'
+        call string_to_string_array(types_string, t%at_types, t%ntype, 2)
+
+        call mpi_recv(t%pw_cutoff, 1, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE, ierr)
+        if (ierr/= 0) stop '[]p0-jkn'
+        call mpi_recv(t%gk_cutoff, 1, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE, ierr)
+        if (ierr/= 0) stop '[]yarafp0-jkn'
+        call mpi_recv(t%k_grid, 3, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE, ierr)
+        if (ierr/=0) stop ';m,asfd1'
+        call mpi_recv(t%k_shift, 3, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE, ierr)
+        if (ierr/=0) stop ';m,asfoodf7458-2'
+
+        call mpi_recv(pseudo_string, t%ntype*250, MPI_CHARACTER, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE, ierr)
+        if (ierr /= 0 ) stop ';o523497867'
+        call string_to_string_array(pseudo_string, t%pseudo_potentials, t%ntype, 250)
+
+        call mpi_recv(xc_string, 2*100, MPI_CHARACTER, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE, ierr)
+        if (ierr /= 0 ) stop '0wersdfva'
+        call string_to_string_array(xc_string, t%xc_functionals, 100, 2)
+
+        call mpi_recv(t%json_string, 8000, MPI_CHARACTER, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE, ierr)
+        if (ierr /= 0) stop 'error getting json'
 
     contains
         subroutine string_to_string_array(str, str_arr, len_array, len_elem)
